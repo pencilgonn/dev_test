@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Business from "./components/Business";
 import { GlassElement } from "./components/Button";
 import Goals from "./components/Goals";
@@ -12,11 +12,24 @@ import UserCard from "./components/UserCard";
 
 const Page = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
 
-  const width = useMemo(() => {
-    if (!containerRef.current) return 0;
-    return containerRef.current.getBoundingClientRect().width;
-  }, [containerRef.current]);
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const updateWidth = () => {
+      if (containerRef.current) {
+        setWidth(containerRef.current.getBoundingClientRect().width);
+      }
+    };
+
+    updateWidth();
+
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(containerRef.current);
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="flex space-x-10">
@@ -35,19 +48,21 @@ const Page = () => {
         <UserCard />
         <Transaction />
 
-        <GlassElement
-          className="mt-6"
-          width={width}
-          height={50}
-          radius={50}
-          depth={10}
-          blur={1}
-          chromaticAberration={1}
-        >
-          <div className="absolute top-1/2 z-1 -translate-y-1/2 font-medium left-1/2 -translate-x-1/2 h-[calc(100%-8px)] w-[calc(100%-8px)] bg-white/80 backdrop-blur rounded-full flex items-center justify-center">
-            See All Transaction
-          </div>
-        </GlassElement>
+        {!!width && (
+          <GlassElement
+            className="mt-6"
+            width={width}
+            height={50}
+            radius={50}
+            depth={10}
+            blur={1}
+            chromaticAberration={1}
+          >
+            <div className="absolute top-1/2 z-1 -translate-y-1/2 font-medium left-1/2 -translate-x-1/2 h-[calc(100%-8px)] w-[calc(100%-8px)] bg-white/80 backdrop-blur rounded-full flex items-center justify-center">
+              See All Transaction
+            </div>
+          </GlassElement>
+        )}
       </div>
 
       <Modal />
