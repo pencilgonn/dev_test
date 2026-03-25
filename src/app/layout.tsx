@@ -4,6 +4,7 @@ import { cn } from "../lib/utils";
 import AdminLayout from "@/components/layouts/AdminLayout";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import AppProvider from "./provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,7 +37,9 @@ export default function RootLayout({
       >
         <div className="h-screen overflow-hidden p-15 flex max-w-380 mx-auto">
           <TooltipProvider>
-            <AdminLayout>{children}</AdminLayout>
+            <AppProvider>
+              <AdminLayout>{children}</AdminLayout>
+            </AppProvider>
           </TooltipProvider>
         </div>
       </body>
